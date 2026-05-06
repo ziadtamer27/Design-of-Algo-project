@@ -2,8 +2,8 @@
 #include <climits>
 using namespace std;
 
-long long dp_val[65];   // min moves for each n
-int split_t[65];        // best split t for each n
+long long dp_val[65];   
+int split_t[65];       
 
 void compute_dp(int maxN) {
     // base cases
@@ -11,19 +11,16 @@ void compute_dp(int maxN) {
     dp_val[1] = 1;
 
     for (int i = 2; i <= maxN; i++) {
-        dp_val[i] = LLONG_MAX;  // start with a large number
+        dp_val[i] = LLONG_MAX;  
 
-        // try every possible split point
         for (int t = 1; t < i; t++) {
-            if (i - t > 62) continue;  // avoid integer overflow
+            if (i - t > 62) continue;  
 
-            // cost = move t disks twice + move rest with 3 pegs
             long long mv = 2LL * dp_val[t] + ((1LL << (i - t)) - 1);
 
-            // keep the smallest result
             if (mv < dp_val[i]) {
                 dp_val[i] = mv;
-                split_t[i] = t;  // remember best split
+                split_t[i] = t;  
             }
         }
     }
@@ -33,7 +30,7 @@ void compute_dp(int maxN) {
 void move3(int n, char s, char d, char a) {
     if (!n) return;
     move3(n - 1, s, a, d);
-    cout << "  [3-peg] disk " << n << ": " << s << " -> " << d << "\n";
+    cout << "Move disk from " << s << " to " << d << "\n";
     move3(n - 1, a, d, s);
 }
 
@@ -41,21 +38,15 @@ void move3(int n, char s, char d, char a) {
 void solve4(int n, char s, char d, char a1, char a2) {
     if (!n) return;
 
-    // single disk: move directly
     if (n == 1) {
-        cout << "  disk 1: " << s << " -> " << d << "\n";
+        cout << "Move disk from " << s << " to " << d << "\n";
         return;
     }
 
-    int t = split_t[n];  // best split for n disks
+    int t = split_t[n];
 
-    // step 1: move top t disks to buffer using 4 pegs
     solve4(t, s, a1, d, a2);
-
-    // step 2: move remaining disks using only 3 pegs
     move3(n - t, s, d, a2);
-
-    // step 3: move buffer disks to destination using 4 pegs
     solve4(t, a1, d, s, a2);
 }
 
