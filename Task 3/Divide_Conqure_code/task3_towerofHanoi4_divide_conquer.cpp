@@ -30,14 +30,9 @@ void towerofHanoi4(int n_disks, char from_peg, char to_peg, char helper1, char h
         return;
     }
 
-    // Move the top k disks from the source peg to the first helper peg using all four pegs
     int k=n_disks/2;
     towerofHanoi4(k, from_peg, helper1, helper2, to_peg);
-
-    // Move the remaining n-k disks from the source peg to the destination peg using the three-peg solution
     towerofHanoi3(n_disks-k, from_peg, to_peg, helper2);
-
-    // Move the k disks from the first helper peg to the destination peg using all four pegs
     towerofHanoi4(k, helper1, to_peg, from_peg, helper2);
 }
 
