@@ -16,7 +16,6 @@ struct Graph {
         this->n = n;
         adj = vector<vector<int>>(n, vector<int>(n, 0));
     }
-
     // Undirected graph, add edge between u and v with weight w 
     void addEdge(int u, int v, int w) 
         { 
@@ -34,7 +33,6 @@ struct Graph {
                         t+=adj[u][v];
         return t;
     }
-
     //Just print the adjacency matrix for visualization 
     // the node is True in S and False in T
     void print() const 
@@ -112,7 +110,7 @@ long long moveGain(const Graph& g,const vector<bool>& inS,int v)
     return gn;
 }
 
-CutResult localSearchCut(const Graph& g,int R=50){
+CutResult Iterative_improvement(const Graph& g,int R=50){
     srand(42); 
     int n=g.n; 
     CutResult gb;
@@ -137,23 +135,12 @@ CutResult localSearchCut(const Graph& g,int R=50){
                 if(inS[v]&&ss==1) continue; 
                 if(!inS[v]&&st==1) continue;
                 long long gv=moveGain(g,inS,v); 
-                if(gv>bg)
-                {
-                    bg=gv;
-                    bv=v;
-                }
+                if(gv>bg) { bg=gv; bv=v; }
             }
             if(bv!=-1)
-            { 
-                if(inS[bv])
-                {
-                    --ss;
-                    ++st;
-                }
-                else{
-                    ++ss;
-                    --st;
-                }
+{ 
+                if(inS[bv])  {--ss;  ++st;}
+                else         {++ss;--st;}
                 inS[bv]=!inS[bv]; 
                 imp=true; 
             }
@@ -198,7 +185,7 @@ int main(){
         CutResult bf=bruteForceCut(g); 
         bf.print("Brute Force"); 
         printCutEdges(g,bf);
-        CutResult ls=localSearchCut(g); 
+        CutResult ls=Iterative_improvement(g); 
         ls.print("Iterative Improvement"); 
         printCutEdges(g,ls);
         cout<<"\nBF="<<bf.weight<<" LS="<<ls.weight<<" Optimal? "<<(ls.weight==bf.weight?"YES":"NO")<<"\n";
@@ -215,7 +202,7 @@ int main(){
         CutResult bf=bruteForceCut(g); 
         bf.print("Brute Force"); 
         printCutEdges(g,bf);
-        CutResult ls=localSearchCut(g,80); 
+        CutResult ls=Iterative_improvement(g,80); 
         ls.print("Iterative Improvement"); 
         printCutEdges(g,ls);
         cout<<"\nBF="<<bf.weight<<" LS="<<ls.weight<<" Optimal? "<<(ls.weight==bf.weight?"YES":"NO")<<"\n";
@@ -232,7 +219,7 @@ int main(){
         CutResult bf=bruteForceCut(g); 
         bf.print("Brute Force"); 
         printCutEdges(g,bf);
-        CutResult ls=localSearchCut(g,80); 
+        CutResult ls=Iterative_improvement(g,80); 
         ls.print("Iterative Improvement"); 
         printCutEdges(g,ls);
         cout<<"\nBF="<<bf.weight<<" LS="<<ls.weight<<" Optimal? "<<(ls.weight==bf.weight?"YES":"NO")<<"\n";
