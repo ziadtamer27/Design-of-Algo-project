@@ -33,7 +33,6 @@ int bruteForce(vector<int> t, vector<int> d, vector<int> p) {
 int dpSolution(vector<int> t, vector<int> d, vector<int> p) {
     int n = t.size();
 
-    // sort by deadline
     vector<int> idx(n);
     for (int i = 0; i < n; i++) idx[i] = i;
 
@@ -67,14 +66,11 @@ int dpSolution(vector<int> t, vector<int> d, vector<int> p) {
 }
 
 
-void solve(vector<int>& t, vector<int>& d, vector<int>& p, vector<bool>& used,int time, int penalty, int& ans) {
+int divideConquer(vector<int>& t,vector<int>& d,vector<int>& p,vector<bool>& used,int time,int penalty) {
 
     int n = t.size();
-    
-    // if all jobs considered
-    bool done = true;
 
-    if (penalty >= ans) return;
+    bool done = true;
 
     for (int i = 0; i < n; i++) {
         if (!used[i]) {
@@ -83,14 +79,15 @@ void solve(vector<int>& t, vector<int>& d, vector<int>& p, vector<bool>& used,in
         }
     }
 
-    if (done) {
-        ans = min(ans, penalty);
-        return;
-    }
+    if (done)
+        return penalty;
 
-    // try each unused job
+    int ans = 1e9;
+
     for (int i = 0; i < n; i++) {
+
         if (!used[i]) {
+
             used[i] = true;
 
             int newTime = time + t[i];
@@ -99,31 +96,28 @@ void solve(vector<int>& t, vector<int>& d, vector<int>& p, vector<bool>& used,in
             if (newTime > d[i])
                 newPenalty += p[i];
 
-            solve(t, d, p, used, newTime, newPenalty, ans);
+            ans = min(ans, divideConquer(t, d, p, used, newTime, newPenalty));
 
-            used[i] = false; // backtrack
+            used[i] = false;
         }
     }
-}
-
-int divideConquer(vector<int> t, vector<int> d, vector<int> p) {
-    int n = t.size();
-    vector<bool> used(n, false);
-
-    int ans = 1e9;
-
-    solve(t, d, p, used, 0, 0, ans);
 
     return ans;
 }
 
 int main() {
-vector<int> t = {1, 3, 2, 1};
-vector<int> d = {2, 3, 3, 1};
-vector<int> p = {20, 50, 30, 10};
+    vector<int> t = {1, 2, 3};
+    vector<int> d = {3, 3, 3};
+    vector<int> p = {10, 20, 30};
+
+
+    int n = t.size();
+    vector<bool> used(n, false);
 
     cout << "Brute Force = " << bruteForce(t, d, p) << endl;
-    cout << "Divide & Conquer = " << divideConquer(t, d, p) << endl;
+
+    cout << "Divide & Conquer = "<< divideConquer(t, d, p, used, 0, 0) << endl;
+
     cout << "DP = " << dpSolution(t, d, p) << endl;
 
     return 0;
